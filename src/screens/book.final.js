@@ -131,9 +131,7 @@ function NotesTextarea({listItem, user}) {
       }),
     {onSettled: () => queryCache.invalidateQueries('list-items')},
   )
-  const debouncedMutate = React.useMemo(() => debounceFn(mutate, {wait: 300}), [
-    mutate,
-  ])
+  const debouncedMutate = React.useCallback(debounceFn(mutate, {wait: 300}), [])
 
   function handleNotesChange(e) {
     debouncedMutate({id: listItem.id, notes: e.target.value})
