@@ -1,6 +1,7 @@
 import ReactDOM from 'react-dom'
 import '@testing-library/jest-dom/extend-expect'
-import {screen, waitForElementToBeRemoved, within} from '@testing-library/react'
+import {screen, waitFor, within} from '@testing-library/react'
+import {queryCache} from 'react-query'
 import userEvent from '@testing-library/user-event'
 import faker from 'faker'
 import {server} from 'test/server'
@@ -23,14 +24,22 @@ function buildUser(overrides) {
   }
 }
 
-const waitForLoadingToFinish = () =>
-  waitForElementToBeRemoved(
-    () => [
-      ...screen.queryAllByLabelText(/loading/i),
-      ...screen.queryAllByText(/loading/i),
-    ],
+function waitForLoadingToFinish() {
+  return waitFor(
+    () => {
+      if (queryCache.isFetching) {
+        throw new Error('The react-query queryCache is still fetching')
+      }
+      if (
+        screen.queryByLabelText(/loading/i) ||
+        screen.queryByText(/loading/i)
+      ) {
+        throw new Error('App loading indicators are still running')
+      }
+    },
     {timeout: 4000},
   )
+}
 
 test('can login and use the book search', async () => {
   // setup
