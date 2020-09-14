@@ -1,9 +1,67 @@
-// 🐨 you'll need to import React and ReactDOM up here
+import React, { useState } from 'react';
+import ReactDOM from 'react-dom';
+import Dialog from '@reach/dialog';
+import { Logo } from "./components/logo";
 
-// 🐨 you'll also need to import the Logo component from './components/logo'
+const LoginForm = ({ onSubmit, buttonText }) => {
+  const handleSubmit = (event) => {
+    event.preventDefault()
+    const { username, password } = event.target.elements
+    //something new
+    onSubmit({
+      username: username.value,
+      password: password.value
+    })
+  }
+  return <form onSubmit={handleSubmit}>
+    <label>Username</label>
+    <input name='username'></input>
 
-// 🐨 create an App component here and render the logo, the title ("Bookshelf"), a login button, and a register button.
-// 🐨 for fun, you can add event handlers for both buttons to alert that the button was clicked
+    <label>Password</label>
+    <input id="password" type="password" />
+    <button type='submit'>{buttonText}</button>
+  </form>
+}
 
-// 🐨 use ReactDOM to render the <App /> to the root element
-// 💰 find the root element with: document.getElementById('root')
+
+const App = () => {
+
+  const [modalState, setModalState] = useState('none')
+  const showLogin = () => setModalState('login')
+  const showRegister = () => setModalState('register')
+  const close = () => setModalState('none')
+
+  const login = loginData => {
+    console.log('login', loginData)
+  }
+
+  const register = registrationData => {
+    console.log('register', registrationData)
+  }
+
+  return <>
+    <Logo />
+    <h1>Bookshelf</h1>
+    <button onClick={showLogin}>Login</button>
+    <button onClick={showRegister}>Register</button>
+
+    <Dialog isOpen={modalState === 'login'} onDismiss={close} aria-label='login'>
+      <button className="close-button" onClick={close}>
+        <span aria-hidden>×</span>
+      </button>
+      <h3>Login</h3>
+      <LoginForm onSubmit={login} buttonText="Login" />
+    </Dialog>
+
+    <Dialog isOpen={modalState === 'register'} onDismiss={close} aria-label='register'>
+      <button className="close-button" onClick={close}>
+        <span aria-hidden>×</span>
+      </button>
+      <h3>Register</h3>
+      <LoginForm onSubmit={register} buttonText="Register" />
+    </Dialog>
+  </>
+}
+
+const root = document.getElementById('root')
+ReactDOM.render(<App />, root)
