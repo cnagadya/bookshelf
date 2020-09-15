@@ -15,15 +15,17 @@ function handleUserResponse({user}) {
   return user
 }
 
-function login({username, password}) {
-  return client('login', {username, password}).then(handleUserResponse)
+const login = async ({username, password}) =>{
+  const result = await client('login', { username, password })
+  return handleUserResponse(result)
 }
 
-function register({username, password}) {
-  return client('register', {username, password}).then(handleUserResponse)
+const register = async ({username, password}) =>{
+  const result = await client('register', { username, password })
+  return handleUserResponse(result)
 }
 
-async function logout() {
+const logout =async () =>{
   window.localStorage.removeItem(localStorageKey)
 }
 
@@ -31,7 +33,7 @@ async function logout() {
 // so that's why we're not just re-using the client
 const authURL = process.env.REACT_APP_AUTH_URL
 
-async function client(endpoint, data) {
+const client = async (endpoint, data) => {
   const config = {
     method: 'POST',
     body: JSON.stringify(data),
