@@ -2,7 +2,7 @@
 import { jsx } from '@emotion/core'
 
 import React from 'react'
-import { Routes, Route, Link } from 'react-router-dom'
+import { Routes, Route, Link, useMatch } from 'react-router-dom'
 
 import { Button } from './components/lib'
 import * as mq from './styles/media-queries'
@@ -56,23 +56,33 @@ function AuthenticatedApp({ user, logout }) {
 }
 
 function NavLink(props) {
+  const matches = useMatch(props.to)
   return (
     <Link
-      css={{
-        display: 'block',
-        padding: '8px 15px 8px 10px',
-        margin: '5px 0',
-        width: '100%',
-        height: '100%',
-        color: colors.text,
-        borderRadius: '2px',
-        borderLeft: '5px solid transparent',
-        ':hover': {
-          color: colors.indigo,
-          textDecoration: 'none',
-          background: colors.gray10,
+      css={[
+        {
+          display: 'block',
+          padding: '8px 15px 8px 10px',
+          margin: '5px 0',
+          width: '100%',
+          height: '100%',
+          color: colors.text,
+          borderRadius: '2px',
+          borderLeft: '5px solid transparent',
+          ':hover': {
+            color: colors.indigo,
+            textDecoration: 'none',
+            background: colors.gray10,
+          },
         },
-      }}
+        matches ? {
+          borderLeft: `5px solid ${colors.indigo}`,
+          background: colors.gray10,
+          ':hover': {
+            background: colors.gray20,
+          }
+        } : null
+      ]}
       {...props}
     />
   )
@@ -109,9 +119,9 @@ function Nav() {
 
 function AppRoutes({ user }) {
   return <Routes>
-    <Route path="/discover" element={<DiscoverBooksScreen user={user}/>}/>
-    <Route path="/book/:bookId" element={<BookScreen user={user}/>}/>
-    <Route path="*" element={<NotFoundScreen/>} />
+    <Route path="/discover" element={<DiscoverBooksScreen user={user} />} />
+    <Route path="/book/:bookId" element={<BookScreen user={user} />} />
+    <Route path="*" element={<NotFoundScreen />} />
   </Routes>
 }
 
