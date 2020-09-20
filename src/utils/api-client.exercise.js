@@ -8,7 +8,9 @@ function client(endpoint, opts = {},
         Authorization: token ? `Bearer ${token}` : undefined
       },
       ...customConfig,
-    }  
+    } 
+    
+    console.log(endpoint, opts)
 
   return window.fetch(`${apiURL}/${endpoint}`, config).then(async response => {
     const data = await response.json()
