@@ -2,24 +2,17 @@
 import {jsx} from '@emotion/core'
 
 import {Link} from 'react-router-dom'
-import {useQuery} from 'react-query'
-import {client} from 'utils/api-client'
+import { useListItem } from 'utils/list-items.exercise'
 import * as mq from 'styles/media-queries'
 import * as colors from 'styles/colors'
 import {StatusButtons} from './status-buttons'
 import {Rating} from './rating'
 
 function BookRow({user, book}) {
-  const {title, author, coverImageUrl} = book
-
-  // 🐨 call useQuery here to get the list item
-  // queryKey should be 'list-items'
-  // queryFn should be a call to the list-items endpoint
-  const {data, isSuccess} = useQuery('list-items', async()=> await client('list-items', {token: user.token}))
-  // 🐨 assign listItem to the list item that has the same bookId as the book.id
-  const listItem = isSuccess ? data.listItems.find(item => item.bookId === book.id) : null
-
-  const id = `book-row-book-${book.id}`
+  
+  const {title, author, coverImageUrl, id:bookId} = book
+  const listItem = useListItem(user.token, bookId)
+  const id = `book-row-book-${bookId}`
 
   return (
     <div
@@ -32,7 +25,7 @@ function BookRow({user, book}) {
     >
       <Link
         aria-labelledby={id}
-        to={`/book/${book.id}`}
+        to={`/book/${bookId}`}
         css={{
           minHeight: 270,
           flexGrow: 2,
@@ -108,7 +101,7 @@ function BookRow({user, book}) {
           height: '100%',
         }}
       >
-        <StatusButtons user={user} book={book} />
+        <StatusButtons token={user.token} bookId={bookId} />
       </div>
     </div>
   )
